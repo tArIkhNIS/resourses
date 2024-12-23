@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tArIkh: Мұрағат құжаттарымен жұмыс</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto Mono", Arial, sans-serif;
+      }
+
+      .header {
+        background: linear-gradient(
+          90deg,
+          rgba(103, 195, 243, 1) 0%,
+          rgba(90, 152, 250, 1) 100%,
+          rgba(0, 212, 255, 1) 100%
+        );
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .logo span {
+        color: #f6f645;
+      }
+
+      .nav a {
+        margin-left: 40px;
+        color: white;
+        font-weight: 700;
+        opacity: 0.5;
+        text-decoration: none;
+      }
+
+      .nav a:first-child {
+        margin-left: 0;
+      }
+
+      .active-link {
+        color: black !important;
+        opacity: 1 !important;
+      }
+
+      .container {
+        display: flex;
+        min-height: calc(100vh - 140px);
+        background-color: #f0f0f0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .section {
+        flex: 1;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 20px;
+        border-right: 2px solid #458ff6;
+        transform-origin: left center;
+      }
+
+      .right-section {
+        transform-origin: right center;
+      }
+
+      .section:last-child {
+        border-right: none;
+      }
+
+      .section.expanded {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+      }
+
+      .left-section.expanded {
+        left: 0;
+        transform-origin: left center;
+        animation: expandLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      .right-section.expanded {
+        right: 0;
+        transform-origin: right center;
+        animation: expandRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes expandLeft {
+        from {
+          width: 50%;
+          transform: translateX(-100%);
+        }
+        to {
+          width: 100%;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes expandRight {
+        from {
+          width: 50%;
+          transform: translateX(100%);
+        }
+        to {
+          width: 100%;
+          transform: translateX(0);
+        }
+      }
+
+      .section:not(.expanded) {
+        width: 50%;
+        transform: translateX(0);
+      }
+
+      .left-section {
+        background-color: #f0f0f0;
+        color: #458ff6;
+      }
+
+      .right-section {
+        background-color: #f0f0f0;
+        color: #458ff6;
+      }
+
+      .expand-btn {
+        padding: 15px 25px;
+        border-radius: 25px;
+        border: none;
+        background-color: white;
+        color: #458ff6;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .expand-btn:hover {
+        background-color: #f6f645;
+        color: #3366cc;
+      }
+
+      .hidden-content {
+        opacity: 0;
+        transform: scale(0.95);
+        transition: all 0.4s ease;
+        position: absolute;
+        text-align: center;
+        padding: 20px;
+        display: none;
+        width: 100%;
+        height: 100%;
+      }
+
+      .section.expanded .hidden-content {
+        opacity: 1;
+        transform: scale(1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .initial-content {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        transition: all 0.4s ease;
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      .section.expanded .initial-content {
+        transform: scale(0.95);
+        opacity: 0;
+        display: none;
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border-radius: 25px;
+        border: 2px solid #458ff6;
+        background-color: white;
+        color: #458ff6;
+        cursor: pointer;
+        display: none;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-btn:hover {
+        background-color: #458ff6;
+        color: white;
+      }
+
+      .section.expanded .back-btn {
+        display: block;
+      }
+
+      .footer {
+        background: linear-gradient(
+          90deg,
+          rgba(103, 195, 243, 1) 0%,
+          rgba(90, 152, 250, 1) 100%,
+          rgba(0, 212, 255, 1) 100%
+        );
+        color: white;
+      }
+
+      .footer-wrapper {
+        width: 75%;
+        margin: 0 auto;
+        padding: 20px 0;
+      }
+
+      .footer-flex {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+
+      .description {
+        width: 35%;
+      }
+
+      .description p {
+        color: white;
+      }
+
+      .links {
+        width: 10%;
+      }
+
+      .links h2 {
+        margin-bottom: 15px;
+      }
+
+      .links ul {
+        list-style: none;
+      }
+
+      .links ul li {
+        margin-bottom: 15px;
+      }
+
+      .links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 300;
+      }
+
+      .accordion-item {
+        width: 100%;
+        max-width: 1200px;
+        margin-bottom: 10px;
+        border: 1px solid #458ff6;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .accordion-button {
+        width: 100%;
+        padding: 15px;
+        background: white;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #458ff6;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .accordion-button:hover {
+        background-color: #f0f8ff;
+      }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background: white;
+      }
+
+      .accordion-content.active {
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      .accordion-content-inner {
+        padding: 15px;
+        color: #333;
+      }
+
+      .arrow {
+        transform: rotate(0deg);
+        transition: transform 0.3s ease;
+      }
+
+      .arrow.active {
+        transform: rotate(180deg);
+      }
+
+      @media (max-width: 720px) {
+        .nav {
+          display: none;
+        }
+
+        .footer-flex {
+          flex-direction: column;
+        }
+
+        .description {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+
+        .links {
+          width: 100%;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">t<span>A</span>r<span>I</span>kh</div>
+      <nav class="nav">
+        <a href="https://tarikhnis.github.io/homepage/index.html">Басты бет</a>
+        <a href="https://tarikhnis.github.io/teacher/index.html">Ұстаздарға</a>
+        <a href="https://tarikhnis.github.io/goals/index.html">Тақырыптар</a>
+        <a
+          class="active-link"
+          href="https://tarikhnis.github.io/resourses/index.html"
+          >Мұрағат құжаттарымен жұмыс</a
+        >
+        <a href="#about">Біз туралы</a>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="section left-section">
+        <div class="initial-content">
+          <h2>Батыс Алашорда тарихына қатысты мұрағат құжаттары</h2>
+          <button class="expand-btn" onclick="expandSection('left')">
+            Оқу
+          </button>
+        </div>
+        <div class="hidden-content">
+          <h2>Алаш қайраткерлері. Фотосуреттер</h2>
+          <img
+            style="width: 50%; border-radius: 25px"
+            src="./alash.jpg"
+            alt=""
+          />
+          <button class="back-btn" onclick="resetSections()">Жабу</button>
+        </div>
+      </div>
+      <div class="section right-section">
+        <div class="initial-content">
+          <h2>Құжатпен жұмыс тапсырмалары</h2>
+          <button class="expand-btn" onclick="expandSection('right')">
+            Тапсырмаларды орындау
+          </button>
+        </div>
+        <div class="hidden-content">
+          <h2>Тапсырмалар</h2>
+          <div class="accordion">
+            <div class="accordion-item">
+              <button class="accordion-button" onclick="toggleAccordion(0)">
+                1 деңгей – Алғашқы кезең.
+                <span class="arrow">▼</span>
+              </button>
+              <div class="accordion-content" id="accordion-0">
+                <div class="accordion-content-inner">
+                  <div>
+                    Батыс Алашорда көшбасшыларының фотосуреттері мен құжаттары.
+                    Олардың қызметі мен өмірбаяны туралы мәліметтер.
+                  </div>
+
+                  <table
+                    style="
+                      width: 100%;
+                      border-collapse: collapse;
+                      margin-top: 20px;
+                    "
+                  >
+                    <tr style="background-color: #f5f5f5">
+                      <th style="border: 1px solid #ddd; padding: 8px">
+                        1. Деректерді сипатта
+                      </th>
+                      <th style="border: 1px solid #ddd; padding: 8px">
+                        2. Деректегі ақпаратты талда
+                      </th>
+                      <th style="border: 1px solid #ddd; padding: 8px">
+                        3. «Қазақ зиялылары отарлық жағдайда ұлттық
+                        патриотизмді, ұлттық мүддені жаңғыртты» деген пікірмен
+                        қаншалықты келісесіз? Пікіріңіз нақты екі дәлел келтір.
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="border: 1px solid #ddd; padding: 8px">
+                        • Деректің түрі<br />
+                        • Жазылған мерзімі<br />
+                        • Деректің авторы<br />
+                        • Дерек кімдер үшін жазылған?
+                      </td>
+                      <td style="border: 1px solid #ddd; padding: 8px">
+                        • Автор баяндаған мәселелердің ішінен маңызды екі
+                        нәрсені анықта.<br />
+                        • Бұл құжат неге жазылған деп ойлайсың?<br />
+                        • Құжаттың негізгі жазылғандығын білдіретін қандай
+                        дәлелдер бар? Құжаттан дәйексөздер келтір.<br />
+                        • Бұл құжат қандай тарихи оқиғалармен байланысты?
+                      </td>
+                      <td style="border: 1px solid #ddd; padding: 8px">
+                        Пікіріңіз нақты екі дәлел келтір.
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="margin-top: 20px">
+                    <h4>3-тапсырма. Кейс әдісі</h4>
+                    <p>
+                      Кейс әдісін қолдану үшін мұғалім кейстер жинақтамасын
+                      жасауы қажет. Ол кейс бойынша талқыланатын сұрақтар,
+                      тапсырмалар ойластырылуы керек. Кейс қолданылып
+                      өткізілетін сабақ бірнеше кезеңнен тұрады:
+                    </p>
+
+                    <p>
+                      <strong>Дайындық кезеңі.</strong> Мұғалім жағдаятты
+                      ойластырады. Оған тапсырмалар дайындайды. Осы уақытта
+                      мұғалім ғалымдар, көркем әдебиет мүмкіндіктерін, өмірлік
+                      жағдаят құрылдарындағы материалдарды қарастырады.
+                    </p>
+
+                    <p>
+                      <strong>Таныстыру кезеңі.</strong> Бұл кезеңде жағдаяттың
+                      сипаттамасы беріледі, ақпараттық материалдар ұтылады.
+                      Сөздік беріледі.
+                    </p>
+
+                    <p>
+                      <strong>Негізгі кезең.</strong> Оқушыларды топқа бөлу.
+                      Оқушылардың материалды оқып талқылауы. Топтық жұмыс
+                      барысында оқушыларды сыни ойлауға бағыттау, олардың
+                      қарым-қатынасына талдау жасап отыру қажет. Кейде топтың
+                      талқылауын тындай отырып, оларға бағыт-бағдар беруге де
+                      болады.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-button" onclick="toggleAccordion(1)">
+                2 деңгей – Іілгері кезең.
+
+                <span class="arrow">▼</span>
+              </button>
+              <div class="accordion-content" id="accordion-1">
+                <div class="accordion-content-inner">
+                  Батыс Алашорда ұйымының құрылуы, қызметі және таратылуы туралы
+                  мұрағат құжаттары.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-button" onclick="toggleAccordion(2)">
+                3 деңгей – Шығармашылық-ізденіс.
+                <span class="arrow">▼</span>
+              </button>
+              <div class="accordion-content" id="accordion-2">
+                <div class="accordion-content-inner">
+                  <h3>3 деңгей – шығармашылық-ізденіс</h3>
+                  <p style="margin: 15px 0">
+                    Бұл деңгейде оқушыларға құжаттар пакеті беріледі. Құжат
+                    арқылы авторлардың көзқарастарын, бірнеше құжаттардың
+                    мазмұнын салыстыруды қажет ететін танымдық тапсырмалар
+                    ұсынылады; салыстырмалы кестелер, логикалық тізбектер құру;
+                    пікірталас мәселелерін талқылау үшін құжаттың теориялық
+                    ережелерін дәлелдеу, өз көзқарастарын дәлелдеу; осы құжаттар
+                    негізінде белгілі бір тақырып бойынша қосымша ақпарат жинау,
+                    оны талдау және жүйелеуге қатысты іздеу қызметі,
+                    шығармашылық тапсырмалар.
+                  </p>
+
+                  <div
+                    style="
+                      background: #f5f5f5;
+                      padding: 15px;
+                      border-radius: 8px;
+                      margin: 15px 0;
+                    "
+                  >
+                    <h4>
+                      Мысалы, Батыс Алашорда үкіметінің құрылу тарихына қатысты
+                      съезд хаттамалары, қаулылары:
+                    </h4>
+
+                    <div style="margin: 15px 0">
+                      <h5>А дерегі</h5>
+                      <p style="white-space: pre-line">
+                        Решение Джамбейтинского казахского съезда о создании
+                        Уильского оляята 18 мая 1918 г. Образовать временное
+                        правительство, выделив Уральскую область в особую
+                        территорию под названием «Уильский Ойялат»... [Құжаттың
+                        толық мәтіні] ЦГА РК. Ф. Р-1227. Оп. 1. Д. 7. Л. 42.
+                        Копия.
+                      </p>
+                    </div>
+
+                    <div style="margin: 15px 0">
+                      <h5>В дерегі</h5>
+                      <p style="white-space: pre-line">
+                        Решение Джамбейтинского казахского съезда о создании
+                        Уильского оляята 18 мая 1918 г Снабжать Уральское
+                        войсковое правительство скотом... [Құжаттың толық
+                        мәтіні] ЦГА РК. Ф. Р-1227. Оп. 1. Д. 7. Л. 42. Копия
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style="margin: 20px 0">
+                    <h4>1-тапсырма</h4>
+                    <table
+                      style="
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 15px 0;
+                      "
+                    >
+                      <tr>
+                        <th
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          1. Деректерді сипатта
+                        </th>
+                        <th
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          2. Деректегі ақпаратты талда
+                        </th>
+                        <th
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          3. Деректегі ақпаратты салыстыру
+                        </th>
+                      </tr>
+                      <tr>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            vertical-align: top;
+                          "
+                        >
+                          • Деректің түрі<br />
+                          • Жазылған мерзімі<br />
+                          • Деректің авторы<br />
+                          • Дерек кімдер үшін жазылған?
+                        </td>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            vertical-align: top;
+                          "
+                        >
+                          • Автор баяндаған мәселелердің ішінен маңызды деген
+                          екі нәрсені анықта.<br />
+                          • Бұл құжат неге жазылған деп ойлайсың?<br />
+                          • Құжаттың неліктен жазылғандығын білдіретін қандай
+                          дәлелдер бар?<br />
+                          • Бұл құжат қандай тарихи оқиғалармен байланысты?
+                        </td>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            vertical-align: top;
+                          "
+                        >
+                          1. Бірінші деректің негізгі идеясы неде?<br />
+                          2. Екінші деректе қандай өзекті мәселелер
+                          көтерілді?<br />
+                          3. Екі деректің ұқсастығы неде?
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div style="margin: 20px 0">
+                    <h4>4. Деректі бағалау</h4>
+                    <table
+                      style="
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 15px 0;
+                      "
+                    >
+                      <tr>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          1. ХХ ғасырдың басында орын алған қоғамдық-саяси
+                          үдерістер қазақ халқы үшін қаншалықты тиімді болды?
+                        </td>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          2. Деректегі ақпаратты және өз біліміңді пайдаланып,
+                          Батыс Алашорда қайраткерлерінің жұмысын бағала?
+                        </td>
+                        <td
+                          style="
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            width: 33%;
+                          "
+                        >
+                          3. Авторлар қандай ойды жеткізгісі келген? Бұл
+                          деректер сол кезеңдегі биліктің шешімдері туралы
+                          қандай ақпарат береді?
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div style="margin: 20px 0">
+                    <h4>2-тапсырма</h4>
+                    <ol style="margin-left: 20px">
+                      <li style="margin: 10px 0">
+                        Бұл құжат қашан, қайда, неге пайда болды? (Оны құрудың
+                        тарихи жағдайларын сипаттаңыз.)
+                      </li>
+                      <li style="margin: 10px 0">
+                        Құжаттың авторы кім? Оның тұлғасы, өмірі мен қызметі
+                        туралы не білесіз?
+                      </li>
+                      <li style="margin: 10px 0">
+                        Құжат мәтінінде қолданылатын негізгі/жаңа ұғымдарды
+                        түсіндіріңіз.
+                      </li>
+                      <li style="margin: 10px 0">
+                        Осы құжат тұтастай алғанда немесе оның жекелеген
+                        бөлімдері қоғамның қандай таптары, топтары мүдделерін
+                        көрсетеді?
+                      </li>
+                      <li style="margin: 10px 0">
+                        Бұл құжаттың орындалуы мемлекет пен қоғамдағы қандай
+                        нәтижелерге, өзгерістерге әкелді немесе әкелуі мүмкін?
+                      </li>
+                      <li style="margin: 10px 0">
+                        Осы құжаттың қызметінің маңызын ашатын нақты оқиғаны
+                        ойлаңыз: сот ісі, оппозицияның сөзі және т. б.
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="back-btn" onclick="resetSections()">Жабу</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-wrapper">
+        <div class="footer-flex">
+          <div class="description">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit
+              repudiandae.
+            </p>
+            <p>©KAZAKHSTANHISTORY PTY LTD 2024. All rights reserved</p>
+          </div>
+          <div class="links">
+            <h2>Организация</h2>
+            <ul>
+              <li><a href="">Басты бет</a></li>
+              <li><a href="">Оқу мақсаттары</a></li>
+              <li><a href="">Сынып</a></li>
+              <li><a href="">Біз туралы</a></li>
+            </ul>
+          </div>
+          <div class="links">
+            <h2>Регион</h2>
+            <ul>
+              <li><a href="">Ресей</a></li>
+              <li><a href="">Қазақстан</a></li>
+              <li><a href="">АҚШ</a></li>
+              <li><a href="">Қытай</a></li>
+            </ul>
+          </div>
+          <div class="links">
+            <h2>Көмек</h2>
+            <ul>
+              <li><a href="">Центр поддержки</a></li>
+              <li><a href="">Найти сервис</a></li>
+              <li><a href="">Контакты</a></li>
+              <li><a href="">Ссылки</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      function expandSection(side) {
+        const sections = document.querySelectorAll(".section");
+        sections.forEach((section) => {
+          if (section.classList.contains(side + "-section")) {
+            section.classList.add("expanded");
+          } else {
+            section.classList.remove("expanded");
+          }
+        });
+      }
+
+      function resetSections() {
+        const sections = document.querySelectorAll(".section");
+        sections.forEach((section) => {
+          section.classList.remove("expanded");
+        });
+      }
+
+      function toggleAccordion(index) {
+        const content = document.getElementById(`accordion-${index}`);
+        const arrow = content.previousElementSibling.querySelector(".arrow");
+        const allContents = document.querySelectorAll(".accordion-content");
+        const allArrows = document.querySelectorAll(".arrow");
+
+        allContents.forEach((item, i) => {
+          if (i !== index) {
+            item.classList.remove("active");
+            allArrows[i].classList.remove("active");
+          }
+        });
+
+        content.classList.toggle("active");
+        arrow.classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>
